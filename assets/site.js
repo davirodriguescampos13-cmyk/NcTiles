@@ -17,16 +17,12 @@
   const comparison = document.querySelector('.comparison');
   const reveal = document.querySelector('#reveal');
   const tileRoot = document.querySelector('.tile-reveal');
-  const strips = Array.from({length:6}, () => { const el = document.createElement('div'); el.className = 'tile-strip'; tileRoot.append(el); return el; });
   function drawTiles(value) {
-    const p = Number(value);
-    strips.forEach((strip, i) => {
-      // Six masonry courses: the center courses lead the reveal like a tile-setter's staggered joints.
-      const offset = [0,-3,2,-2,3,0][i] * Math.sin(p / 100 * Math.PI);
-      const right = Math.max(0, Math.min(100, p + offset));
-      const top = i / 6 * 100, bottom = (i+1) / 6 * 100;
-      strip.style.clipPath = `polygon(0 ${top}%, ${right}% ${top}%, ${right}% ${bottom}%, 0 ${bottom}%)`;
-    });
+    const p = Math.max(0, Math.min(100, Number(value)));
+    // One opaque image and one continuous mask avoid seams between clipped courses on mobile.
+    const mask = `inset(0 ${100-p}% 0 0)`;
+    tileRoot.style.clipPath = mask;
+    tileRoot.style.webkitClipPath = mask;
     comparison.querySelector('.seam').style.left = `${p}%`;
     comparison.querySelector('.label-after').style.opacity = p < 10 ? 0 : 1;
     comparison.querySelector('.label-before').style.opacity = p > 90 ? 0 : 1;
